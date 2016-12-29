@@ -39,7 +39,7 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
 
-    keywords='28070T nexxtech rf power outlet',
+    keywords='28070T nexxtech py28070T power outlet',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     install_requires=['RPi.GPIO'],
     entry_points={
