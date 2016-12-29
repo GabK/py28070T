@@ -25,15 +25,15 @@ class Transmitter:
     def __init__(self, data_pin, initial_state=[False, False, False]):
         self.data_pin = data_pin
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.data_pin, GPIO.OUT)
-
         if type(initial_state) is list:
             for socket, state in enumerate(initial_state):
                 self.set(socket, state)
 
     def set(self, socket, state):
         code = self._CODE % (self._SOCKETS[socket], self._STATES[state])
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.data_pin, GPIO.OUT)
 
         for attempt in range(self._RETRIES):
             for b in code:
