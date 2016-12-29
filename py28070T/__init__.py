@@ -30,7 +30,7 @@ class Transmitter:
                 self.set(socket, state)
 
     def set(self, socket, state):
-        code = self._CODE % (self._SOCKETS[socket], self._STATES[state])
+        code = self._CODE % (self._STATES[state], self._SOCKETS[socket])
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.data_pin, GPIO.OUT)
