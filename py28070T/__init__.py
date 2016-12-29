@@ -30,7 +30,7 @@ class Transmitter:
 
         if type(initial_state) is list:
             for socket, state in enumerate(initial_state):
-                self.transmit(socket, state)
+                self.set(socket, state)
 
     def set(self, socket, state):
         code = self._CODE % self._SOCKETS[socket], self._STATES[state]
