@@ -33,7 +33,7 @@ class Transmitter:
                 self.set(socket, state)
 
     def set(self, socket, state):
-        code = self._CODE % self._SOCKETS[socket], self._STATES[state]
+        code = self._CODE % (self._SOCKETS[socket], self._STATES[state])
 
         for attempt in range(self._RETRIES):
             for b in code:
