@@ -1,4 +1,4 @@
-from collections import deque
+import logging
 import RPi.GPIO as GPIO
 import time
 
@@ -18,67 +18,27 @@ STATES = {
 
 SOCKETS = ['01', '10', '00']
 
-class RxTx:
-    _last_event_times = {}
-    _q = deque([], 54)
-
-    rx0_pin = None
-    rx1_pin = None
-
+class Tx:
     tx_pin = None
 
     states = [None, None, None]
 
-    def __init__(self, rx0_pin = None, rx1_pin = None, tx_pin = None, initial_state = [True, False, False]):
-        self.rx0_pin = rx0_pin
-        self.rx1_pin = rx1_pin
+    def __init__(self, tx_pin = None, initial_state = [False, False, False]):
         self.tx_pin = tx_pin
 
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
 
         if self.tx_pin is not None:
             GPIO.setup(self.tx_pin, GPIO.OUT)
 
-        if self.rx1_pin is not None:
-            GPIO.setup(self.rx1_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-            GPIO.add_event_detect(self.rx1_pin, GPIO.RISING, callback=self._process_gpio_event)
-
-        if self.rx0_pin is not None:
-            GPIO.setup(self.rx0_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-            GPIO.add_event_detect(self.rx0_pin, GPIO.FALLING, callback=self._process_gpio_event)
-
         if type(initial_state) is list:
             for socket, state in enumerate(initial_state):
                 self.set(socket, state)
 
-    def _process_gpio_event(self, channel):
-        self._last_event_times[channel] = time.time()
-
-        if self._last_event_times[self.rx0_pin] is not None and self._last_event_times[self.rx1_pin] is not None:
-            dt = abs(self._last_event_times[self.rx0_pin] - self._last_event_times[self.rx1_pin])
-
-            if channel == self.rx0_pin and dt >= LONG_HIGH:
-                # ---\
-                pass
-            elif channel == self.rx0_pin and dt >= SHORT_HIGH:
-                # -\
-                pass
-            elif channel == self.rx1_pin and dt >= LONG_LOW:
-                # ___/
-                pass
-            elif channel == self.rx1_pin and dt >= SHORT_LOW:
-                # _/
-                pass
-
-        if channel == self.rx0_pin:
-            print "FALLING: %s ------ %s" % (str(time.time()), GPIO.input(self.rx0_pin))
-        else:
-            print "RISING:  %s ------ %s" % (str(time.time()), GPIO.input(self.rx1_pin))
-
     def set(self, socket, state):
         if self.tx_pin is None:
-            pass
-            # warning
+            logging.warning("TX pin is not set.")
         else:
             code = CODE % (STATES[state], SOCKETS[socket])
 
@@ -99,5 +59,3 @@ class RxTx:
 
                 GPIO.output(self.tx_pin, 0)
                 time.sleep(WAIT)
-
-            #GPIO.cleanup()
