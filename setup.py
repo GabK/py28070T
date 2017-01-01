@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='Py28070T',
 
-    version='0.0.1',
+    version='1.0.0',
 
     description='Python driver for Nexxtech RF power outlets (using 28070T RF transmitter)',
     long_description=long_description,
