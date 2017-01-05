@@ -2,6 +2,8 @@ import logging
 import RPi.GPIO as GPIO
 import time
 
+logging.getLogger().setLevel(logging.DEBUG)
+
 CODE = '%s11011101111%s111111010111'
 
 LONG_HIGH = 0.0014583
@@ -18,7 +20,7 @@ STATES = {
 
 SOCKETS = ['01', '10', '00']
 
-class Socket:
+class Socket(object):
     tx_pin = None
     socket = None
     _state = None
@@ -34,7 +36,7 @@ class Socket:
             GPIO.setup(self.tx_pin, GPIO.OUT)
 
         if state is not None:
-            self.state = state
+            self._state = state
 
     @property
     def state(self):
@@ -45,7 +47,10 @@ class Socket:
         if self.tx_pin is None:
             logging.warning("TX pin is not set.")
         else:
+            self._state = value
             code = CODE % (STATES[value], SOCKETS[self.socket])
+
+            logging.debug("Sending code [ %s ]" % code)
 
             for attempt in range(RETRIES):
                 for b in code:
@@ -62,5 +67,4 @@ class Socket:
                     else:
                         continue
 
-                GPIO.output(self.tx_pin, 0)
                 time.sleep(WAIT)
