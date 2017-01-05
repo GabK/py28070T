@@ -36,7 +36,7 @@ class Socket(object):
             GPIO.setup(self.tx_pin, GPIO.OUT)
 
         if state is not None:
-            self._state = state
+            self.state = state
 
     @property
     def state(self):
