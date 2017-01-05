@@ -18,13 +18,14 @@ STATES = {
 
 SOCKETS = ['01', '10', '00']
 
-class Tx:
+class Socket:
     tx_pin = None
+    socket = None
+    _state = None
 
-    states = [None, None, None]
-
-    def __init__(self, tx_pin = None, initial_state = [False, False, False]):
+    def __init__(self, tx_pin = None, socket = None, state = False):
         self.tx_pin = tx_pin
+        self.socket = socket
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
@@ -32,15 +33,19 @@ class Tx:
         if self.tx_pin is not None:
             GPIO.setup(self.tx_pin, GPIO.OUT)
 
-        if type(initial_state) is list:
-            for socket, state in enumerate(initial_state):
-                self.set(socket, state)
+        if state is not None:
+            self.state = state
 
-    def set(self, socket, state):
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value):
         if self.tx_pin is None:
             logging.warning("TX pin is not set.")
         else:
-            code = CODE % (STATES[state], SOCKETS[socket])
+            code = CODE % (STATES[value], SOCKETS[self.socket])
 
             for attempt in range(RETRIES):
                 for b in code:
