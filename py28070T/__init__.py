@@ -4,7 +4,7 @@ import time
 
 logging.getLogger().setLevel(logging.DEBUG)
 
-CODE = '%s11011101111%s111111010111'
+CODE = '{0}11011101111{1}111111010111'
 
 LONG_HIGH = 0.0014583
 LONG_LOW = 0.00114583
@@ -48,9 +48,9 @@ class Socket(object):
             logging.warning("TX pin is not set.")
         else:
             self._state = value
-            code = CODE % (STATES[value], SOCKETS[self.socket])
+            code = CODE.format(STATES[value], SOCKETS[self.socket])
 
-            logging.debug("Sending code [ %s ]" % code)
+            logging.debug("Sending code [ {0} ]", code)
 
             for attempt in range(RETRIES):
                 for b in code:
